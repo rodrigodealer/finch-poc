@@ -1,10 +1,13 @@
-package com.github.rodrigodealer
+package com.github.rodrigodealer.controllers
 
 import java.util.UUID
 
+import io.circe.generic.auto._
+import io.finch.circe._
+import com.github.rodrigodealer.Todo
 import io.finch.{Created, Endpoint, Ok, delete, get, jsonBody, patch, path, post}
 
-trait TodoController {
+class TodoController {
 
   def postedTodo: Endpoint[Todo] = jsonBody[UUID => Todo].map(_(UUID.randomUUID()))
 
@@ -12,6 +15,10 @@ trait TodoController {
     Todo.save(t)
 
     Created(t)
+  }
+
+  def getTodos: Endpoint[List[Todo]] = get("todos") {
+    Ok(Todo.list())
   }
 
   def patchedTodo: Endpoint[Todo => Todo] = jsonBody[Todo => Todo]
@@ -29,10 +36,6 @@ trait TodoController {
       }
     }
 
-  def getTodos: Endpoint[List[Todo]] = get("todos") {
-    Ok(Todo.list())
-  }
-
   def deleteTodo: Endpoint[Todo] = delete("todos" :: path[UUID]) { id: UUID =>
     Todo.get(id) match {
       case Some(t) => Todo.delete(id); Ok(t)
@@ -45,6 +48,10 @@ trait TodoController {
     all.foreach(t => Todo.delete(t.id))
 
     Ok(all)
+  }
+
+  def routes = {
+    getTodos :+: postTodo :+: deleteTodo :+: deleteTodos :+: patchTodo
   }
 
 }

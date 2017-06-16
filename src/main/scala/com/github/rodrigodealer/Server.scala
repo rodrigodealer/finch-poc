@@ -1,4 +1,8 @@
-import com.github.rodrigodealer.TodoController
+import java.util.UUID
+
+import com.github.rodrigodealer.Todo
+import com.github.rodrigodealer.controllers.TodoController
+import com.netflix.governator.guice.LifecycleInjector
 import com.twitter.app.Flag
 import com.twitter.finagle.{Http, Service}
 import com.twitter.finagle.http.{Request, Response}
@@ -8,13 +12,19 @@ import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
 
-object Main extends TwitterServer with TodoController {
+object Main extends TwitterServer {
 
-  val port: Flag[Int] = flag("port", 8081, "TCP port for HTTP server")
+  private val injector = LifecycleInjector.builder()
+    .usingBasePackages("controllers", "service")
+    .build().createInjector()
 
-  val api: Service[Request, Response] = (
-    getTodos :+: postTodo :+: deleteTodo :+: deleteTodos :+: patchTodo
-    ).handle({
+  private val todoController = injector.getInstance(classOf[TodoController])
+
+  private val port: Flag[Int] = flag("port", 8081, "TCP port for HTTP server")
+
+  private val api: Service[Request, Response] = {
+    todoController.routes
+  }.handle({
     case e: Exception => NotFound(e)
   }).toServiceAs[Application.Json]
 
