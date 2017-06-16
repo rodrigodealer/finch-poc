@@ -1,4 +1,4 @@
-package com.github.rodrigodealer
+package com.github.rodrigodealer.todo
 
 import java.util.UUID
 

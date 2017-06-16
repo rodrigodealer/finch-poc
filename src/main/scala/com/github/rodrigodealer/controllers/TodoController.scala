@@ -2,9 +2,9 @@ package com.github.rodrigodealer.controllers
 
 import java.util.UUID
 
+import com.github.rodrigodealer.todo.Todo
 import io.circe.generic.auto._
 import io.finch.circe._
-import com.github.rodrigodealer.Todo
 import io.finch.{Created, Endpoint, Ok, delete, get, jsonBody, patch, path, post}
 
 class TodoController {

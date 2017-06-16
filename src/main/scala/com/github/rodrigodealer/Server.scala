@@ -1,7 +1,7 @@
 import java.util.UUID
 
-import com.github.rodrigodealer.Todo
 import com.github.rodrigodealer.controllers.TodoController
+import com.github.rodrigodealer.todo.Todo
 import com.netflix.governator.guice.LifecycleInjector
 import com.twitter.app.Flag
 import com.twitter.finagle.{Http, Service}
